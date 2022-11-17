@@ -40,7 +40,7 @@ public class Solution {
         productList.stream()
                 .filter(el -> el.price > 10)
                 .sorted(Comparator.comparing(Product::getSeason,
-                        Comparator.comparing(Enum::toString))
+                        Comparator.comparing(Enum::toString)).reversed()
                         .thenComparing(Product::isHighlighted))
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 
