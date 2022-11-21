@@ -2,12 +2,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Solution {
     enum Season{
@@ -20,29 +16,28 @@ public class Solution {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Product{
-
         AtomicLong id;
         int price;
         boolean isHighlighted;
         Season season;
     }
-    public class Jeans extends Product {
-        String denimType;
-    }
-    public class Sweater extends Product {
-        boolean isLongSleeved;
-    }
     public static void main(String[] args) {
+        final AtomicLong idGenerator = new AtomicLong(1);
 
-        List<Product> productList = List.of(new Product(new AtomicLong(1),50,true,Season.WINTER));
+        List<Product> productList = List.of(new Product(
+                new AtomicLong(idGenerator.getAndIncrement()),50,true, Season.WINTER),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),1,true, Season.SPRING),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),23,true, Season.WINTER),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),15,false, Season.WINTER),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),56,true, Season.SUMMER),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),12,true, Season.AUTUMN),
+                new Product(new AtomicLong(idGenerator.getAndIncrement()),40,true, Season.SUMMER));
 
-        Map<AtomicLong, Product> orderedProducts =
+        List<Product> orderedProducts =
         productList.stream()
                 .filter(el -> el.price > 10)
-                .sorted(Comparator.comparing(Product::getSeason,
-                        Comparator.comparing(Enum::toString)).reversed()
-                        .thenComparing(Product::isHighlighted))
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
-
+                .sorted(Comparator.comparing(Product::getSeason, Comparator.comparing(Enum::toString)).reversed()
+                        .thenComparing(el -> !el.isHighlighted))
+                .toList();
     }
 }
